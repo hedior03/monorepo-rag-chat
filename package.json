@@ -1,0 +1,16 @@
+{
+  "name": "chatrag",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo with Hono API and Tanstack Router SPA",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "biome": "^0.3.3",
+    "zod": "^3.24.2"
+  }
+}
