@@ -1,13 +1,72 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import ChatsSidebar from '~/components/ChatsSidebar';
+import { useTheme } from '~/components/theme-provider';
+import { SidebarInset, SidebarTrigger } from '~/components/ui/sidebar';
+import { ThemeToggle } from '~/components/ui/theme-toggle';
+import { ConversationApi } from '~/lib/api';
+import {
+  useConversations,
+  useCreateConversation,
+  useDeleteConversation,
+} from '~/lib/hooks/conversations';
+import { queryClient } from '~/lib/providers/app-client-provider';
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
-})
+  loader: async () => {
+    const conversationApi = new ConversationApi();
+    const conversations = await conversationApi.getConversations();
+
+    queryClient.setQueryData([conversationApi.ROOT_QUERY_KEY], conversations);
+    return null;
+  },
+});
 
 function HomeComponent() {
+  useTheme();
+  const conversationsQuery = useConversations();
+  const createConversationMutation = useCreateConversation();
+  const deleteConversationMutation = useDeleteConversation();
+
+  console.log(conversationsQuery.data);
+
+  const handleCreateConversation = () => {
+    createConversationMutation.mutate(undefined, {
+      onSuccess: () => {
+        conversationsQuery.refetch();
+      },
+    });
+  };
+
+  const handleDeleteConversation = (id: string) => {
+    deleteConversationMutation.mutate(id, {
+      onSuccess: () => {
+        conversationsQuery.refetch();
+      },
+    });
+  };
+
+  if (conversationsQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (conversationsQuery.isError || !conversationsQuery.data) {
+    return <div>Error</div>;
+  }
+
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
-    </div>
-  )
+    <>
+      <ChatsSidebar conversations={conversationsQuery.data} />
+      <div className="min-h-screen bg-background text-foreground w-full">
+        <SidebarInset>
+          <div className="flex flex-row justify-between items-center gap-4 w-full p-2 border-b border-accent">
+            <SidebarTrigger />
+
+            <ThemeToggle />
+          </div>
+          <Outlet />
+        </SidebarInset>
+      </div>
+    </>
+  );
 }

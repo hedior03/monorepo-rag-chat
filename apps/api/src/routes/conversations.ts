@@ -1,14 +1,16 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { ConversationsService } from '../services/conversations';
+import { ConversationsService } from '@/api/services/conversations';
+import { MessagesService } from '../services/messages';
 
 const router = new Hono();
-const service = new ConversationsService();
+const conversationService = new ConversationsService();
+const messageService = new MessagesService();
 
 // Get all conversations
 router.get('/', async (c) => {
-  const conversations = await service.list();
+  const conversations = await conversationService.list();
   return c.json(conversations);
 });
 
@@ -24,8 +26,14 @@ router.get(
   async (c) => {
     try {
       const { id } = c.req.valid('param');
-      const conversation = await service.get(id);
-      return c.json(conversation);
+      const conversation = await conversationService.get(id);
+
+      const messages = await messageService.list(id);
+
+      return c.json({
+        ...conversation,
+        messages,
+      });
     } catch (error) {
       if (
         error instanceof Error &&
@@ -40,7 +48,7 @@ router.get(
 
 // Create new conversation
 router.post('/', async (c) => {
-  const conversation = await service.create();
+  const conversation = await conversationService.create();
   return c.json(conversation, 201);
 });
 
@@ -55,7 +63,7 @@ router.delete(
   ),
   async (c) => {
     const { id } = c.req.valid('param');
-    await service.delete(id);
+    await conversationService.delete(id);
     return c.json({ success: true }, 200);
   },
 );

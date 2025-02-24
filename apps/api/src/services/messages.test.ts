@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MessagesService } from './messages';
-import { db } from '../db';
+import { MessagesService } from '@/api/services/messages';
+import { db } from '@/api/db';
 
-vi.mock('../db', () => ({
+vi.mock('@/api/db', () => ({
   db: {
     insert: vi.fn(() => ({
       values: vi.fn(() => ({

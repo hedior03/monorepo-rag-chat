@@ -4,13 +4,19 @@
   "version": "1.0.0",
   "description": "Monorepo with Hono API and Tanstack Router SPA",
   "scripts": {
+    "build": "pnpm run -r build",
+    "dev": "pnpm run -r --parallel dev",
+    "dev:full": "docker-compose up -d && pnpm dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "biome": "^0.3.3",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "biome": "^0.3.3",
+    "typescript": "^5.7.3"
   }
 }

@@ -1,7 +1,16 @@
 import { desc, eq } from 'drizzle-orm';
-import { db } from '../db/index.js';
-import { conversationsTable } from '../db/schema.js';
-import type { Conversation } from '../db/schema.js';
+import { db } from '@/api/db/index';
+import { conversationsTable } from '@/api/db/schema';
+import type { Conversation } from '@/api/db/schema';
+
+// Helper function to convert database conversation to API type
+function mapConversation(dbConversation: any): Conversation {
+  return {
+    ...dbConversation,
+    createdAt: dbConversation.createdAt.toISOString(),
+    updatedAt: dbConversation.updatedAt.toISOString(),
+  };
+}
 
 export class ConversationsService {
   async create(): Promise<Conversation> {
@@ -9,7 +18,7 @@ export class ConversationsService {
       .insert(conversationsTable)
       .values({})
       .returning();
-    return newConversation;
+    return mapConversation(newConversation);
   }
 
   async get(id: number): Promise<Conversation> {
@@ -22,7 +31,7 @@ export class ConversationsService {
       throw new Error('Conversation not found');
     }
 
-    return conversation[0];
+    return mapConversation(conversation[0]);
   }
 
   async list(): Promise<Conversation[]> {
@@ -30,7 +39,7 @@ export class ConversationsService {
       .select()
       .from(conversationsTable)
       .orderBy(desc(conversationsTable.createdAt));
-    return conversations;
+    return conversations.map(mapConversation);
   }
 
   async delete(id: number): Promise<void> {

@@ -9,7 +9,15 @@
     "**/routeTree.gen.ts": true
   },
 
-  "cSpell.words": ["chatrag", "cmdk", "embla", "sonner", "vaul", "typesafety"],
+  "cSpell.words": [
+    "chatrag",
+    "cmdk",
+    "embla",
+    "ragchat",
+    "sonner",
+    "typesafety",
+    "vaul"
+  ],
 
   "editor.defaultFormatter": "biomejs.biome",
   "biome.rename": true,

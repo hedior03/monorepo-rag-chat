@@ -1,7 +1,12 @@
 import { desc, eq } from 'drizzle-orm';
-import { db } from '../db/index.js';
-import { messagesTable } from '../db/schema.js';
-import type { Message, MessageInsert } from '../db/schema.js';
+import { db } from '@/api/db/index';
+import { messageSchema, messagesTable } from '@/api/db/schema';
+import type { Message, MessageInsert } from '@/api/db/schema';
+
+// Helper function to convert database message to API type
+function mapMessage(dbMessage: unknown): Message {
+  return messageSchema.parse(dbMessage);
+}
 
 export class MessagesService {
   async create(message: MessageInsert): Promise<Message> {
@@ -9,7 +14,7 @@ export class MessagesService {
       .insert(messagesTable)
       .values(message)
       .returning();
-    return newMessage;
+    return mapMessage(newMessage);
   }
 
   async list(
@@ -25,6 +30,6 @@ export class MessagesService {
       .limit(limit)
       .offset(offset);
 
-    return messages;
+    return messages.map(mapMessage);
   }
 }

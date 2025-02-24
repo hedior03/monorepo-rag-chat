@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { MessagesService } from '../services/messages';
-import { messageInsertSchema } from '../db/schema';
+import { MessagesService } from '@/api/services/messages';
+import { messageInsertSchema } from '@/api/db/schema';
 
 const router = new Hono();
 const service = new MessagesService();
