@@ -1,3 +1,20 @@
 {
-  "cSpell.words": ["chatrag", "cmdk", "embla", "sonner", "vaul"]
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+
+  "cSpell.words": ["chatrag", "cmdk", "embla", "sonner", "vaul", "typesafety"],
+
+  "editor.defaultFormatter": "biomejs.biome",
+  "biome.rename": true,
+  "biome_lsp.trace.server": "messages",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnSaveMode": "file"
 }
