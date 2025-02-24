@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "@chatrag/api",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",

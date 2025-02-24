@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConversationsService } from './conversations';
 import { db } from '../db';
-import type { Conversation } from '../db/schema';
 
 // Mock the database
 vi.mock('../db', () => ({

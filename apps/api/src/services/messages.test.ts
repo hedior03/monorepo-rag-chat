@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessagesService } from './messages';
 import { db } from '../db';
-import type { Message } from '../db/schema';
 
 vi.mock('../db', () => ({
   db: {
