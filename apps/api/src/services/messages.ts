@@ -6,6 +6,8 @@ import {
   messagesTable,
 } from '@/api/db/schema';
 import type { Message, MessageInsert } from '@/api/db/schema';
+import { generateResponse } from './ai';
+import { chatModels } from '../lib/ai';
 
 // Helper function to convert database message to API type
 function mapMessage(dbMessage: unknown): Message {
@@ -15,21 +17,29 @@ function mapMessage(dbMessage: unknown): Message {
 export class MessagesService {
   async create(message: MessageInsert): Promise<Message> {
     try {
-      if (!message.conversationId) {
-        const conversation = await db
-          .insert(conversationsTable)
-          .values({
-            title: 'New Conversation',
-          })
-          .returning();
-        message.conversationId = conversation[0].id;
-      }
+      const result = await db.transaction(async (tx) => {
+        if (!message.conversationId) {
+          const conversation = await tx
+            .insert(conversationsTable)
+            .values({
+              title: 'New Conversation',
+            })
+            .returning();
+          message.conversationId = conversation[0].id;
+        }
 
-      const [newMessage] = await db
-        .insert(messagesTable)
-        .values({ ...message, conversationId: message.conversationId })
-        .returning();
-      return mapMessage(newMessage);
+        const [newMessage] = await tx
+          .insert(messagesTable)
+          .values({ ...message, conversationId: message.conversationId })
+          .returning();
+        return mapMessage(newMessage);
+      });
+      console.log('Message created', result);
+      console.log('Generating response');
+      // TODO:Will await the response but not right now
+      generateResponse(chatModels[0], message);
+
+      return result;
     } catch (error) {
       console.error('Error creating message', error);
       throw error;

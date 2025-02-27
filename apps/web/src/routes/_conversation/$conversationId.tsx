@@ -1,10 +1,9 @@
 import { createFileRoute, useParams } from '@tanstack/react-router';
 import { useConversation } from '~/lib/hooks/conversations';
-import { MessageApi } from '~/lib/api';
-import { useMutation } from '@tanstack/react-query';
 import InputMessage from '~/components/components/InputMessage';
 import { Message } from '~/components/components/message';
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary';
+import { useCreateMessage } from '~/lib/hooks/messages';
 
 export const Route = createFileRoute('/_conversation/$conversationId')({
   component: ConversationComponent,
@@ -15,15 +14,13 @@ function ConversationComponent() {
   const { conversationId } = useParams({
     from: '/_conversation/$conversationId',
   });
-  const messageApi = new MessageApi();
 
   const conversationQuery = useConversation(conversationId);
-
-  const sendMessageMutation = useMutation({
-    mutationFn: (text: string) =>
-      messageApi.createMessage(conversationId, text),
-    onSuccess: () => {
-      conversationQuery.refetch();
+  const sendMessageMutation = useCreateMessage({
+    conversationId,
+    onSuccess: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await conversationQuery.refetch();
     },
   });
 

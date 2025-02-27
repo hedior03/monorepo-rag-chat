@@ -6,7 +6,13 @@
   "scripts": {
     "build": "pnpm run -r build",
     "dev": "pnpm run -r --parallel dev",
-    "dev:full": "docker-compose up -d && pnpm dev",
+    "dev:continue": "pnpm db:start && pnpm dev",
+    "dev:zero": "pnpm db:stop && pnpm dev:continue",
+    "db:start": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "db:stop": "docker-compose down",
+    "db:migrate": "pnpm run --filter api db:migrate",
+    "db:reset": "pnpm run --filter api db:reset",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

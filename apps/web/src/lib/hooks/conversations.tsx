@@ -8,7 +8,7 @@ export const useConversations = (refetchInterval?: number) => {
     queryKey: [conversationApi.ROOT_QUERY_KEY],
     queryFn: () => conversationApi.getConversations(),
     throwOnError: true,
-    refetchInterval: refetchInterval ?? 2000,
+    refetchInterval: refetchInterval,
   });
 };
 
@@ -17,6 +17,7 @@ export const useConversation = (id: string) => {
     queryKey: [conversationApi.ROOT_QUERY_KEY, id],
     queryFn: () => conversationApi.getConversation(id),
     throwOnError: true,
+    refetchInterval: 2000,
   });
 };
 

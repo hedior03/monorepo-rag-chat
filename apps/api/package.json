@@ -29,8 +29,11 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.1.17",
+    "@ai-sdk/openai": "^1.1.14",
     "@hono/node-server": "^1.8.2",
     "@hono/zod-validator": "^0.4.3",
+    "ai": "^4.1.46",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.39.3",
     "drizzle-zod": "^0.5.1",
