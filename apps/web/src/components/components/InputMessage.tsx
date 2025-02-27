@@ -36,8 +36,8 @@ export default function InputMessage({
     },
   });
 
-  function handleSubmit(data: FormValues) {
-    onSubmit(data.content.text);
+  const handleSubmit = async (data: FormValues) => {
+    await onSubmit(data.content.text);
     form.reset({
       content: {
         type: 'text',
@@ -45,7 +45,7 @@ export default function InputMessage({
       },
       role: 'user',
     });
-  }
+  };
 
   return (
     <Form {...form}>

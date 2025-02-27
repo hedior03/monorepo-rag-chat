@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { MessageApi } from '../api';
+import { type Message, MessageApi } from '../api';
 
 const messageApi = new MessageApi();
 
@@ -10,10 +10,19 @@ export const useMessages = (conversationId: string) => {
   });
 };
 
-export const useCreateMessage = (conversationId: string) => {
+export type UseCreateMessageProps = {
+  conversationId?: string;
+  onSuccess?: (message: Message) => void;
+};
+
+export const useCreateMessage = ({
+  conversationId,
+  onSuccess,
+}: UseCreateMessageProps = {}) => {
   return useMutation({
     mutationKey: [messageApi.ROOT_QUERY_KEY, conversationId],
     mutationFn: (message: string) =>
       messageApi.createMessage(conversationId, message),
+    onSuccess,
   });
 };

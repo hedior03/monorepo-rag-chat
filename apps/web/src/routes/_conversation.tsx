@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import ChatsSidebar from '~/components/ChatsSidebar';
-import InputMessage from '~/components/components/InputMessage';
 import { useTheme } from '~/components/theme-provider';
 import { SidebarInset, SidebarTrigger } from '~/components/ui/sidebar';
 import { ThemeToggle } from '~/components/ui/theme-toggle';
@@ -65,7 +64,6 @@ function HomeComponent() {
           </div>
           <div className="flex flex-col justify-between h-full overflow-hidden">
             <Outlet />
-            <InputMessage onSubmit={() => {}} />
           </div>
         </SidebarInset>
       </div>

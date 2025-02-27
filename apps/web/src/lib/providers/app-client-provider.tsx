@@ -6,6 +6,10 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      throwOnError: true,
+    },
+    mutations: {
+      throwOnError: true,
     },
   },
 });

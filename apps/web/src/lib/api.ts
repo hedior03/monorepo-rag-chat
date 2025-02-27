@@ -21,6 +21,9 @@ export class ConversationApi {
   async createConversation() {
     const response = await fetch(`${BASE_URL}/api/conversations`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     return response.json();
@@ -45,6 +48,12 @@ export class ConversationApi {
   }
 }
 
+type MessageInsert = {
+  content: string;
+  role: string;
+  conversationId?: number;
+};
+
 export class MessageApi {
   public readonly ROOT_QUERY_KEY = 'messages';
 
@@ -57,16 +66,30 @@ export class MessageApi {
   }
 
   async createMessage(
-    conversationId: string,
+    conversationId: string | undefined,
     message: string,
   ): Promise<Message> {
-    const response = await fetch(
-      `${BASE_URL}/api/conversations/${conversationId}/messages`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ message }),
+    const messageInsert: MessageInsert = {
+      content: message,
+      role: 'user',
+      conversationId: conversationId
+        ? Number.parseInt(conversationId)
+        : undefined,
+    };
+
+    const response = await fetch(`${BASE_URL}/api/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify(messageInsert),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Error: ${response.status} - ${errorText}`);
+      throw new Error(`Request failed: ${response.status}`);
+    }
 
     return response.json();
   }

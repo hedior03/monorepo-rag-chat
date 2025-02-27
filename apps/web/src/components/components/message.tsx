@@ -1,11 +1,11 @@
-import { cn } from '~/lib/utils/shadcn-utils'
-import { Card, CardContent, CardFooter } from '~/components/ui/card'
+import { cn } from '~/lib/utils';
+import { Card, CardContent, CardFooter } from '~/components/ui/card';
 
 interface MessageProps {
-  content: string
-  userRole: 'user' | 'assistant'
-  timestamp?: string
-  isLoading?: boolean
+  content: string;
+  userRole: 'user' | 'assistant';
+  timestamp?: string;
+  isLoading?: boolean;
 }
 
 export function Message({
@@ -14,7 +14,7 @@ export function Message({
   timestamp,
   isLoading,
 }: MessageProps) {
-  const isUser = role === 'user'
+  const isUser = role === 'user';
 
   return (
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
@@ -38,5 +38,5 @@ export function Message({
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
