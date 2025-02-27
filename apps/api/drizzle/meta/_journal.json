@@ -29,13 +29,6 @@
       "when": 1740665596830,
       "tag": "0003_graceful_jane_foster",
       "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1740665973035,
-      "tag": "0004_free_exiles",
-      "breakpoints": true
     }
   ]
 }

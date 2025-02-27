@@ -1,6 +1,7 @@
 import { db, documentSchema, documentsTable, messagesTable } from '../db';
 import type {
   Document,
+  DocumentInsert,
   DocumentWithSimilarity,
   MessageInsert,
 } from '../db/schema';
@@ -35,15 +36,16 @@ export const generateResponse = async (
   return null;
 };
 
-export const indexTextDocument = async (
-  document: string,
-): Promise<Document[]> => {
+export const indexTextDocument = async ({
+  content: inputDocument,
+  filename,
+}: DocumentInsert): Promise<Document[]> => {
   const textSplitter = new RecursiveCharacterTextSplitter({
     chunkSize: Number(process.env.CHUNK_SIZE ?? 512),
     chunkOverlap: Number(process.env.CHUNK_OVERLAP ?? 128),
   });
 
-  const texts = await textSplitter.splitText(document);
+  const texts = await textSplitter.splitText(inputDocument);
 
   const embedding = await myProvider
     .textEmbeddingModel('text-embedding-model-small')
@@ -58,6 +60,7 @@ export const indexTextDocument = async (
       const textHash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
 
       const metadata = {
+        filename,
         textHash,
         textLength,
         percentageOfDocument: index / texts.length,

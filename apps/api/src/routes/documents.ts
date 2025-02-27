@@ -7,8 +7,8 @@ import { documentSimilaritySchema } from '../lib/validationSchemas';
 const router = new Hono();
 
 router.post('/', zValidator('json', documentInsertSchema), async (c) => {
-  const { content } = c.req.valid('json');
-  const documents = await indexTextDocument(content);
+  const document = c.req.valid('json');
+  const documents = await indexTextDocument(document);
   return c.json(
     documents.map((document) => document.id),
     201,

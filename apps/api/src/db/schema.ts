@@ -70,6 +70,7 @@ export const documentSchema = createSelectSchema(documentsTable).extend({
 });
 export const documentInsertSchema = z.object({
   content: z.string().min(1),
+  filename: z.string().min(1),
 });
 
 // Define TypeScript types from Zod schemas

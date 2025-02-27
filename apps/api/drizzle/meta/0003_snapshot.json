@@ -1,6 +1,6 @@
 {
-  "id": "53b66a9f-3594-4cfa-a27a-9f6f943e17c8",
-  "prevId": "767085ad-98e4-4c6d-9454-8771a517d0cd",
+  "id": "1a75e493-6ef1-46c2-bb4c-5cfeab097f29",
+  "prevId": "e1bc6b00-03bb-4fce-a84c-a26f2c1cf9f7",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -91,6 +91,13 @@
           "type": "vector(1536)",
           "primaryKey": false,
           "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
         }
       },
       "indexes": {
@@ -106,9 +113,9 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "hnsw",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {},
@@ -159,15 +166,15 @@
         "messages_conversation_id_conversations_id_fk": {
           "name": "messages_conversation_id_conversations_id_fk",
           "tableFrom": "messages",
-          "tableTo": "conversations",
           "columnsFrom": [
             "conversation_id"
           ],
+          "tableTo": "conversations",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -179,10 +186,10 @@
   },
   "enums": {},
   "schemas": {},
+  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
-  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},
