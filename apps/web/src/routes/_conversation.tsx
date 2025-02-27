@@ -55,7 +55,7 @@ function HomeComponent() {
 
   return (
     <>
-      <ChatsSidebar conversations={conversationsQuery.data} />
+      <ChatsSidebar conversations={conversationsQuery.data ?? []} />
       <div className="min-h-screen bg-background text-foreground w-full">
         <SidebarInset>
           <div className="flex flex-row justify-between items-center gap-4 w-full p-2 border-b border-accent">

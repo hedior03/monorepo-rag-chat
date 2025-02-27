@@ -36,23 +36,34 @@ export default function ChatsSidebar({ conversations }: ChatsSidebarProps) {
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu className="px-2">
-          {conversations?.map((conversation) => (
-            <SidebarMenuItem key={conversation.id}>
-              <SidebarMenuButton asChild tooltip={conversation.title}>
+        <SidebarMenu className="flex flex-col gap-2 px-2">
+          {conversations.length > 0 ? (
+            conversations.map((conversation) => (
+              <SidebarMenuItem
+                key={conversation.id}
+                className="flex flex-row justify-between items-center w-full"
+              >
                 <Link
                   to="/$conversationId"
                   params={{ conversationId: conversation.id }}
                   activeOptions={{ exact: true }}
-                  activeProps={{ className: cn('bg-muted') }}
-                  className={cn('px-4 flex justify-start gap-4')}
+                  activeProps={{ className: cn('bg-muted rounded-md') }}
+                  className={cn(
+                    'px-2 py-2 flex justify-start items-center gap-4 w-full',
+                  )}
                 >
                   <MessageSquare className="shrink-0" />
-                  <span>{conversation.title}</span>
+                  <span className="overflow-ellipsis">
+                    {conversation.title}
+                  </span>
                 </Link>
-              </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))
+          ) : (
+            <SidebarMenuItem className="flex flex-row justify-center items-center w-full mt-4">
+              <p className="text-sm text-muted-foreground">No conversations</p>
             </SidebarMenuItem>
-          ))}
+          )}
         </SidebarMenu>
       </SidebarContent>
     </Sidebar>

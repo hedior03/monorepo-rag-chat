@@ -14,24 +14,34 @@ function mapConversation(dbConversation: any): Conversation {
 
 export class ConversationsService {
   async create(): Promise<Conversation> {
-    const [newConversation] = await db
-      .insert(conversationsTable)
-      .values({})
-      .returning();
-    return mapConversation(newConversation);
+    try {
+      const [newConversation] = await db
+        .insert(conversationsTable)
+        .values({})
+        .returning();
+      return mapConversation(newConversation);
+    } catch (error) {
+      console.error('Error creating conversation', error);
+      throw error;
+    }
   }
 
   async get(id: number): Promise<Conversation> {
-    const conversation = await db
-      .select()
-      .from(conversationsTable)
-      .where(eq(conversationsTable.id, id));
+    try {
+      const conversation = await db
+        .select()
+        .from(conversationsTable)
+        .where(eq(conversationsTable.id, id));
 
-    if (conversation.length === 0) {
-      throw new Error('Conversation not found');
+      if (conversation.length === 0) {
+        throw new Error('Conversation not found');
+      }
+
+      return mapConversation(conversation[0]);
+    } catch (error) {
+      console.error('Error getting conversation', error);
+      throw error;
     }
-
-    return mapConversation(conversation[0]);
   }
 
   async list(): Promise<Conversation[]> {
@@ -43,6 +53,11 @@ export class ConversationsService {
   }
 
   async delete(id: number): Promise<void> {
-    await db.delete(conversationsTable).where(eq(conversationsTable.id, id));
+    try {
+      await db.delete(conversationsTable).where(eq(conversationsTable.id, id));
+    } catch (error) {
+      console.error('Error deleting conversation', error);
+      throw error;
+    }
   }
 }

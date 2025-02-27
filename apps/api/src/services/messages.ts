@@ -14,22 +14,26 @@ function mapMessage(dbMessage: unknown): Message {
 
 export class MessagesService {
   async create(message: MessageInsert): Promise<Message> {
-    if (!message.conversationId) {
-      const conversation = await db
-        .insert(conversationsTable)
-        .values({
-          title: 'New Conversation',
-        })
+    try {
+      if (!message.conversationId) {
+        const conversation = await db
+          .insert(conversationsTable)
+          .values({
+            title: 'New Conversation',
+          })
+          .returning();
+        message.conversationId = conversation[0].id;
+      }
+
+      const [newMessage] = await db
+        .insert(messagesTable)
+        .values({ ...message, conversationId: message.conversationId })
         .returning();
-
-      message.conversationId = conversation[0].id;
+      return mapMessage(newMessage);
+    } catch (error) {
+      console.error('Error creating message', error);
+      throw error;
     }
-
-    const [newMessage] = await db
-      .insert(messagesTable)
-      .values({ ...message, conversationId: message.conversationId })
-      .returning();
-    return mapMessage(newMessage);
   }
 
   async list(
@@ -37,14 +41,19 @@ export class MessagesService {
     limit = 10,
     offset = 0,
   ): Promise<Message[]> {
-    const messages = await db
-      .select()
-      .from(messagesTable)
-      .where(eq(messagesTable.conversationId, conversationId))
-      .orderBy(desc(messagesTable.createdAt))
-      .limit(limit)
-      .offset(offset);
+    try {
+      const messages = await db
+        .select()
+        .from(messagesTable)
+        .where(eq(messagesTable.conversationId, conversationId))
+        .orderBy(desc(messagesTable.createdAt))
+        .limit(limit)
+        .offset(offset);
 
-    return messages.map(mapMessage);
+      return messages.map(mapMessage);
+    } catch (error) {
+      console.error('Error listing messages', error);
+      throw error;
+    }
   }
 }

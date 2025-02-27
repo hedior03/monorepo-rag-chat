@@ -42,7 +42,7 @@ function ConversationComponent() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-col-reverse flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex flex-col-reverse flex-1 overflow-y-auto p-4 gap-4">
         {conversation.messages.map((message) => (
           <Message
             key={message.id}
@@ -51,7 +51,7 @@ function ConversationComponent() {
           />
         ))}
       </div>
-      <div className="p-4 border-t">
+      <div className="p-4 border-t ">
         <InputMessage
           onSubmit={sendMessageMutation.mutate}
           isLoading={sendMessageMutation.isPending}

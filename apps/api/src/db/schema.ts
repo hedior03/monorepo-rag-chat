@@ -1,6 +1,6 @@
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import type { z } from 'zod';
+import { z } from 'zod';
 
 // Define database tables
 export const conversationsTable = pgTable('conversations', {
@@ -26,10 +26,14 @@ export const messagesTable = pgTable('messages', {
 export const conversationSchema = createSelectSchema(conversationsTable);
 
 export const messageSchema = createSelectSchema(messagesTable);
-export const messageInsertSchema = createInsertSchema(messagesTable).omit({
-  id: true,
-  createdAt: true,
-});
+export const messageInsertSchema = createInsertSchema(messagesTable)
+  .extend({
+    content: z.string().min(1),
+  })
+  .omit({
+    id: true,
+    createdAt: true,
+  });
 
 // Define TypeScript types from Zod schemas
 export type Conversation = z.infer<typeof conversationSchema>;
