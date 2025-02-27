@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import ChatsSidebar from '~/components/ChatsSidebar';
+import InputMessage from '~/components/components/InputMessage';
 import { useTheme } from '~/components/theme-provider';
 import { SidebarInset, SidebarTrigger } from '~/components/ui/sidebar';
 import { ThemeToggle } from '~/components/ui/theme-toggle';
@@ -11,7 +12,7 @@ import {
 } from '~/lib/hooks/conversations';
 import { queryClient } from '~/lib/providers/app-client-provider';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_conversation')({
   component: HomeComponent,
   loader: async () => {
     const conversationApi = new ConversationApi();
@@ -24,11 +25,10 @@ export const Route = createFileRoute('/')({
 
 function HomeComponent() {
   useTheme();
+
   const conversationsQuery = useConversations();
   const createConversationMutation = useCreateConversation();
   const deleteConversationMutation = useDeleteConversation();
-
-  console.log(conversationsQuery.data);
 
   const handleCreateConversation = () => {
     createConversationMutation.mutate(undefined, {
@@ -61,10 +61,12 @@ function HomeComponent() {
         <SidebarInset>
           <div className="flex flex-row justify-between items-center gap-4 w-full p-2 border-b border-accent">
             <SidebarTrigger />
-
             <ThemeToggle />
           </div>
-          <Outlet />
+          <div className="flex flex-col justify-between h-full overflow-hidden">
+            <Outlet />
+            <InputMessage onSubmit={() => {}} />
+          </div>
         </SidebarInset>
       </div>
     </>

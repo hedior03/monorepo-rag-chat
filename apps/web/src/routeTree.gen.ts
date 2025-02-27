@@ -11,60 +11,112 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
+import { Route as ConversationImport } from './routes/_conversation'
+import { Route as ConversationIndexImport } from './routes/_conversation/index'
+import { Route as ConversationConversationIdImport } from './routes/_conversation/$conversationId'
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+const ConversationRoute = ConversationImport.update({
+  id: '/_conversation',
   getParentRoute: () => rootRoute,
 } as any)
+
+const ConversationIndexRoute = ConversationIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ConversationRoute,
+} as any)
+
+const ConversationConversationIdRoute = ConversationConversationIdImport.update(
+  {
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => ConversationRoute,
+  } as any,
+)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_conversation': {
+      id: '/_conversation'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ConversationImport
+      parentRoute: typeof rootRoute
+    }
+    '/_conversation/$conversationId': {
+      id: '/_conversation/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/$conversationId'
+      preLoaderRoute: typeof ConversationConversationIdImport
+      parentRoute: typeof ConversationImport
+    }
+    '/_conversation/': {
+      id: '/_conversation/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof ConversationIndexImport
+      parentRoute: typeof ConversationImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface ConversationRouteChildren {
+  ConversationConversationIdRoute: typeof ConversationConversationIdRoute
+  ConversationIndexRoute: typeof ConversationIndexRoute
+}
+
+const ConversationRouteChildren: ConversationRouteChildren = {
+  ConversationConversationIdRoute: ConversationConversationIdRoute,
+  ConversationIndexRoute: ConversationIndexRoute,
+}
+
+const ConversationRouteWithChildren = ConversationRoute._addFileChildren(
+  ConversationRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '': typeof ConversationRouteWithChildren
+  '/$conversationId': typeof ConversationConversationIdRoute
+  '/': typeof ConversationIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/$conversationId': typeof ConversationConversationIdRoute
+  '/': typeof ConversationIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
+  '/_conversation': typeof ConversationRouteWithChildren
+  '/_conversation/$conversationId': typeof ConversationConversationIdRoute
+  '/_conversation/': typeof ConversationIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '' | '/$conversationId' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/$conversationId' | '/'
+  id:
+    | '__root__'
+    | '/_conversation'
+    | '/_conversation/$conversationId'
+    | '/_conversation/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  ConversationRoute: typeof ConversationRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  ConversationRoute: ConversationRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +129,23 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/_conversation"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_conversation": {
+      "filePath": "_conversation.tsx",
+      "children": [
+        "/_conversation/$conversationId",
+        "/_conversation/"
+      ]
+    },
+    "/_conversation/$conversationId": {
+      "filePath": "_conversation/$conversationId.tsx",
+      "parent": "/_conversation"
+    },
+    "/_conversation/": {
+      "filePath": "_conversation/index.tsx",
+      "parent": "/_conversation"
     }
   }
 }

@@ -16,16 +16,6 @@ export type ChatsSidebarProps = {
 };
 
 export default function ChatsSidebar({ conversations }: ChatsSidebarProps) {
-  console.log('=============');
-  console.log(conversations);
-  console.log('=============');
-  console.log(conversations.length);
-  console.log('=============');
-  console.log(typeof conversations);
-  console.log('=============');
-  console.log(conversations.map((c) => c.id));
-  console.log('=============');
-
   return (
     <Sidebar variant="floating">
       <SidebarHeader className="flex flex-row items-center justify-between">
@@ -50,18 +40,16 @@ export default function ChatsSidebar({ conversations }: ChatsSidebarProps) {
           {conversations?.map((conversation) => (
             <SidebarMenuItem key={conversation.id}>
               <SidebarMenuButton asChild tooltip={conversation.title}>
-                <button type="button">
-                  {/* <Link
+                <Link
                   to="/$conversationId"
                   params={{ conversationId: conversation.id }}
                   activeOptions={{ exact: true }}
                   activeProps={{ className: cn('bg-muted') }}
                   className={cn('px-4 flex justify-start gap-4')}
-                > */}
+                >
                   <MessageSquare className="shrink-0" />
-                  <span>{conversation.id}</span>
-                </button>
-                {/* </Link> */}
+                  <span>{conversation.title}</span>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

@@ -21,7 +21,7 @@ function RootComponent() {
           </SidebarProvider>
         </TooltipProvider>
       </ThemeProvider>
-      <TanStackRouterDevtools position="bottom-right" />
+      <TanStackRouterDevtools position="bottom-left" />
     </>
   );
 }

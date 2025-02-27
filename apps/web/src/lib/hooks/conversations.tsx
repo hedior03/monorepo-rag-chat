@@ -3,11 +3,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 const conversationApi = new ConversationApi();
 
-export const useConversations = () => {
+export const useConversations = (refetchInterval?: number) => {
   return useQuery({
     queryKey: [conversationApi.ROOT_QUERY_KEY],
     queryFn: () => conversationApi.getConversations(),
     throwOnError: true,
+    refetchInterval: refetchInterval ?? 2000,
   });
 };
 
