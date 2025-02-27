@@ -20,20 +20,34 @@ export const generateResponse = async (
   model: ChatModel,
   history: MessageInsert[],
 ): Promise<MessageInsert | null> => {
-  const prompt = formatPromptWithHistory(history);
+  const similarDocuments = await queryDocumentSimilarity(
+    history[history.length - 1].content,
+  );
 
-  const response = await generateText({
-    model: myProvider.languageModel(model.id),
-    prompt,
-  });
+  const prompt = formatPromptWithHistory(
+    similarDocuments.map((d) => d.content),
+    history,
+  );
 
-  await db.insert(messagesTable).values({
-    role: 'assistant',
-    content: response.text,
-    conversationId: history[0].conversationId,
-  });
+  try {
+    const response = await generateText({
+      model: myProvider.languageModel(model.id),
+      prompt,
+    });
 
-  return null;
+    if (response?.text) {
+      await db.insert(messagesTable).values({
+        role: 'assistant',
+        content: response.text,
+        conversationId: history[0].conversationId,
+      });
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw error;
+  }
 };
 
 export const indexTextDocument = async ({
