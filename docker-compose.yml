@@ -1,7 +1,6 @@
-version: "3.8"
 services:
   postgres:
-    image: ankane/pgvector:latest
+    image: pgvector/pgvector:pg17
     ports:
       - "5432:5432"
     environment:

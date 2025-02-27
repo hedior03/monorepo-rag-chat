@@ -1,4 +1,13 @@
-import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  vector,
+} from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -22,6 +31,26 @@ export const messagesTable = pgTable('messages', {
     .notNull(),
 });
 
+export const documentsTable = pgTable(
+  'documents',
+  {
+    id: serial('id').primaryKey(),
+    content: text('content').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    textHash: text('text_hash').notNull(),
+    textLength: integer('text_length').notNull(),
+    embedding: vector('embedding', { dimensions: 1536 }).notNull(),
+    metadata: jsonb('metadata').default({}),
+  },
+  (table) => [
+    index('embeddingIndex').using(
+      'hnsw',
+      table.embedding.op('vector_cosine_ops'),
+    ),
+  ],
+);
+
 // Define Zod schemas for validation
 export const conversationSchema = createSelectSchema(conversationsTable);
 
@@ -35,7 +64,20 @@ export const messageInsertSchema = createInsertSchema(messagesTable)
     createdAt: true,
   });
 
+export const documentSchema = createSelectSchema(documentsTable).extend({
+  content: z.string().min(1),
+  embedding: z.array(z.number()).length(1536), // openai embedding dimension
+});
+export const documentInsertSchema = z.object({
+  content: z.string().min(1),
+});
+
 // Define TypeScript types from Zod schemas
 export type Conversation = z.infer<typeof conversationSchema>;
+
 export type Message = z.infer<typeof messageSchema>;
 export type MessageInsert = z.infer<typeof messageInsertSchema>;
+
+export type Document = z.infer<typeof documentSchema>;
+export type DocumentWithSimilarity = Document & { similarity: number };
+export type DocumentInsert = z.infer<typeof documentInsertSchema>;

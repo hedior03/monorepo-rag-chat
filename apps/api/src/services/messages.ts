@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, asc } from 'drizzle-orm';
 import { db } from '@/api/db/index';
 import {
   conversationsTable,
@@ -6,8 +6,8 @@ import {
   messagesTable,
 } from '@/api/db/schema';
 import type { Message, MessageInsert } from '@/api/db/schema';
-import { generateResponse } from './ai';
 import { chatModels } from '../lib/ai';
+import { generateResponse } from './ai';
 
 // Helper function to convert database message to API type
 function mapMessage(dbMessage: unknown): Message {
@@ -32,14 +32,24 @@ export class MessagesService {
           .insert(messagesTable)
           .values({ ...message, conversationId: message.conversationId })
           .returning();
-        return mapMessage(newMessage);
-      });
-      console.log('Message created', result);
-      console.log('Generating response');
-      // TODO:Will await the response but not right now
-      generateResponse(chatModels[0], message);
 
-      return result;
+        const history = await tx
+          .select()
+          .from(messagesTable)
+          .where(eq(messagesTable.conversationId, message.conversationId))
+          .orderBy(asc(messagesTable.createdAt))
+          .limit(50);
+
+        return {
+          message: mapMessage(newMessage),
+          history: history.map(mapMessage),
+        };
+      });
+
+      // TODO: could integrate streaming here
+      generateResponse(chatModels[0], result.history);
+
+      return result.message;
     } catch (error) {
       console.error('Error creating message', error);
       throw error;

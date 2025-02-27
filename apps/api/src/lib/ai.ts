@@ -8,6 +8,9 @@ export const myProvider = customProvider({
     'chat-model-large': openai('gpt-4o'),
     'gemini-model': google('gemini-2.0-flash-001'),
   },
+  textEmbeddingModels: {
+    'text-embedding-model-small': openai.embedding('text-embedding-3-small'),
+  },
 });
 
 export type ChatModel = {
