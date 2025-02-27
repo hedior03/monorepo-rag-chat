@@ -8,7 +8,12 @@ import { router } from './routes';
 export const app = new Hono()
   .use('*', logger())
   .use('*', prettyJSON())
-  .use('*', cors())
+  .use(
+    '*',
+    cors({
+      origin: '*',
+    }),
+  )
   .get('/', (c) => c.json({ status: 'ok' }))
   .route('/api', router)
   .onError((err, c) => {

@@ -39,6 +39,7 @@ router.get(
 
 // Create new message
 router.post('/', zValidator('json', messageInsertSchema), async (c) => {
+  console.log(c.req.json());
   const message = await service.create(c.req.valid('json'));
   return c.json(message, 201);
 });

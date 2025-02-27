@@ -15,6 +15,13 @@
       "when": 1740620979583,
       "tag": "0001_slimy_wilson_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740633490623,
+      "tag": "0002_dashing_mephistopheles",
+      "breakpoints": true
     }
   ]
 }

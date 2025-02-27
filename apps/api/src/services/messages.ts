@@ -1,6 +1,10 @@
 import { desc, eq } from 'drizzle-orm';
 import { db } from '@/api/db/index';
-import { messageSchema, messagesTable } from '@/api/db/schema';
+import {
+  conversationsTable,
+  messageSchema,
+  messagesTable,
+} from '@/api/db/schema';
 import type { Message, MessageInsert } from '@/api/db/schema';
 
 // Helper function to convert database message to API type
@@ -10,9 +14,20 @@ function mapMessage(dbMessage: unknown): Message {
 
 export class MessagesService {
   async create(message: MessageInsert): Promise<Message> {
+    if (!message.conversationId) {
+      const conversation = await db
+        .insert(conversationsTable)
+        .values({
+          title: 'New Conversation',
+        })
+        .returning();
+
+      message.conversationId = conversation[0].id;
+    }
+
     const [newMessage] = await db
       .insert(messagesTable)
-      .values(message)
+      .values({ ...message, conversationId: message.conversationId })
       .returning();
     return mapMessage(newMessage);
   }
