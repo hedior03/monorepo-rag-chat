@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 import { showRoutes } from 'hono/dev';
 import { app } from '@/api/app';
 import { hc } from 'hono/client';
+import { ensureVectorExtension } from '@/api/db';
 
 // Re-export the app
 export { app };
@@ -28,13 +29,21 @@ if (process.env.NODE_ENV === 'development') {
 
 // Start server unless we're being imported
 if (process.env.NODE_ENV !== 'test') {
-  serve(
-    {
-      fetch: app.fetch,
-      port: Number(process.env.PORT) || 3000,
-    },
-    (info) => {
-      console.log(`Server is running on http://localhost:${info.port}`);
-    },
-  );
+  // Initialize database before starting the server
+  ensureVectorExtension()
+    .then(() => {
+      serve(
+        {
+          fetch: app.fetch,
+          port: Number(process.env.PORT) || 3000,
+        },
+        (info) => {
+          console.log(`Server is running on http://localhost:${info.port}`);
+        },
+      );
+    })
+    .catch((error) => {
+      console.error('Failed to initialize database:', error);
+      process.exit(1);
+    });
 }

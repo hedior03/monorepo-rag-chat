@@ -9,6 +9,16 @@ if (!process.env.DATABASE_URL) {
 
 const client = postgres(process.env.DATABASE_URL);
 
+export const ensureVectorExtension = async () => {
+  try {
+    await client`CREATE EXTENSION IF NOT EXISTS vector;`;
+    console.log('Vector extension created or already exists');
+  } catch (error) {
+    console.error('Failed to create vector extension:', error);
+    throw error;
+  }
+};
+
 export const db = drizzle(client, { schema });
 
 // Export schema for client usage
