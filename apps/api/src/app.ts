@@ -14,7 +14,7 @@ export const app = new Hono()
       origin: '*',
     }),
   )
-  .get('/', (c) => c.json({ status: 'ok' }))
+  .all('/', (c) => c.json({ status: 'ok' }))
   .route('/api', router)
   .onError((err, c) => {
     console.error(`${err}`);

@@ -4,21 +4,16 @@ import { zValidator } from '@hono/zod-validator';
 import { documentInsertSchema } from '../db';
 import { documentSimilaritySchema } from '../lib/validationSchemas';
 
-const router = new Hono();
-
-router.post('/', zValidator('json', documentInsertSchema), async (c) => {
-  const document = c.req.valid('json');
-  const documents = await indexTextDocument(document);
-  return c.json(
-    documents.map((document) => document.id),
-    201,
-  );
-});
-
-router.post(
-  '/query',
-  zValidator('json', documentSimilaritySchema),
-  async (c) => {
+const router = new Hono()
+  .post('/', zValidator('json', documentInsertSchema), async (c) => {
+    const document = c.req.valid('json');
+    const documents = await indexTextDocument(document);
+    return c.json(
+      documents.map((document) => document.id),
+      201,
+    );
+  })
+  .post('/query', zValidator('json', documentSimilaritySchema), async (c) => {
     const { query, topK } = c.req.valid('json');
     const documents = await queryDocumentSimilarity(query, topK);
 
@@ -29,7 +24,6 @@ router.post(
       metadata: document.metadata,
     }));
     return c.json(similarities);
-  },
-);
+  });
 
 export default router;
