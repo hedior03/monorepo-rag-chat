@@ -19,3 +19,6 @@ pnpm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
+
+# tmp
+.tmp/
