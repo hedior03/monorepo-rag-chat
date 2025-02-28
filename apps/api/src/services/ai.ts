@@ -5,7 +5,7 @@ import type {
   DocumentWithSimilarity,
   MessageInsert,
 } from '../db/schema';
-import { type ChatModel, chatModels, myProvider } from '../lib/ai';
+import { type ChatModel, chatModels, myProvider } from '../lib/ai/models';
 import { formatPromptWithHistory } from '../lib/ai/prompts';
 import { generateText } from 'ai';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
@@ -99,10 +99,11 @@ export const indexTextDocument = async ({
 
   return outputDocuments;
 };
-
+const SIMILARITY_THRESHOLD = Number(process.env.SIMILARITY_THRESHOLD ?? 0.5);
 export const queryDocumentSimilarity = async (
   query: string,
   topK = 4,
+  similarityThreshold = SIMILARITY_THRESHOLD,
 ): Promise<DocumentWithSimilarity[]> => {
   const embedding = await myProvider
     .textEmbeddingModel('text-embedding-model-small')
@@ -119,7 +120,7 @@ export const queryDocumentSimilarity = async (
       similarity,
     })
     .from(documentsTable)
-    .where(gt(similarity, Number(process.env.SIMILARITY_THRESHOLD ?? 0.5)))
+    .where(gt(similarity, similarityThreshold))
     .orderBy((t) => desc(t.similarity))
     .limit(topK);
 

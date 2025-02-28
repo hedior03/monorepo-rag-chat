@@ -6,7 +6,7 @@ import {
   messagesTable,
 } from '@/api/db/schema';
 import type { Message, MessageInsert } from '@/api/db/schema';
-import { chatModels } from '../lib/ai';
+import { chatModels } from '../lib/ai/models';
 import { generateResponse } from './ai';
 
 // Helper function to convert database message to API type
