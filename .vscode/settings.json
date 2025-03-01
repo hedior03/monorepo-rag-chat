@@ -21,7 +21,8 @@
     "sonner",
     "textsplitters",
     "typesafety",
-    "vaul"
+    "vaul",
+    "whistleblower"
   ],
 
   "editor.defaultFormatter": "biomejs.biome",
