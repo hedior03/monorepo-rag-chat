@@ -1,16 +1,19 @@
-import { db, documentSchema, documentsTable, messagesTable } from '../db';
+import { generateObject, generateText } from 'ai';
+import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
+import { z } from 'zod';
+import { cosineDistance, desc, getTableColumns, gt, sql } from 'drizzle-orm';
+import { db, documentSchema, documentsTable, messagesTable } from '@/api/db';
 import type {
   Document,
   DocumentInsert,
   DocumentWithSimilarity,
   MessageInsert,
-} from '../db/schema';
-import { type ChatModel, chatModels, myProvider } from '../lib/ai/models';
-import { formatPromptWithHistory } from '../lib/ai/prompts';
-import { generateText } from 'ai';
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { z } from 'zod';
-import { cosineDistance, desc, getTableColumns, gt, sql } from 'drizzle-orm';
+} from '@/api/db/schema';
+import { type ChatModel, chatModels, myProvider } from '@/api/lib/ai/models';
+import {
+  formatPromptWithHistory,
+  generateRerankingPrompt,
+} from '@/api/lib/ai/prompts';
 
 export const listModels = async (): Promise<ChatModel[]> => {
   return chatModels;
@@ -20,16 +23,26 @@ export const generateResponse = async (
   model: ChatModel,
   history: MessageInsert[],
 ): Promise<MessageInsert | null> => {
-  const similarDocuments = await queryDocumentSimilarity(
-    history[history.length - 1].content,
-  );
-
-  const prompt = formatPromptWithHistory(
-    similarDocuments.map((d) => d.content),
-    history,
-  );
-
   try {
+    const similarDocuments = await queryDocumentSimilarity(
+      history[history.length - 1].content,
+    );
+
+    const rerankedDocuments = await rerankDocuments(
+      history[history.length - 1].content,
+      similarDocuments.map((d) => ({
+        content: d.content,
+        filename:
+          // @ts-expect-error
+          typeof d.metadata?.filename === 'string' ? d.metadata.filename : '',
+      })),
+    );
+
+    const prompt = formatPromptWithHistory(
+      rerankedDocuments.map((d) => d.content),
+      history,
+    );
+
     const response = await generateText({
       model: myProvider.languageModel(model.id),
       prompt,
@@ -99,7 +112,9 @@ export const indexTextDocument = async ({
 
   return outputDocuments;
 };
+
 const SIMILARITY_THRESHOLD = Number(process.env.SIMILARITY_THRESHOLD ?? 0.5);
+
 export const queryDocumentSimilarity = async (
   query: string,
   topK = 4,
@@ -129,4 +144,65 @@ export const queryDocumentSimilarity = async (
     .parse(similarDocuments);
 
   return outputDocuments;
+};
+
+type RerankedDocument = DocumentInsert & {
+  relevanceScore: number;
+};
+
+export const scoreDocumentsWithAI = async (
+  query: string,
+  documents: DocumentInsert[],
+): Promise<Array<{ documentContent: string; relevanceScore: number }>> => {
+  const scoredDocumentContent = await generateObject({
+    prompt: generateRerankingPrompt(query, documents),
+    model: myProvider.languageModel(chatModels[0].id),
+    schema: z.object({
+      documents: z.array(
+        z.object({
+          documentContent: z.string(),
+          relevanceScore: z.number().min(0).max(10),
+        }),
+      ),
+    }),
+    maxRetries: 3,
+  });
+
+  return scoredDocumentContent.object.documents;
+};
+
+export const processRerankedDocuments = (
+  scoredDocuments: Array<{ documentContent: string; relevanceScore: number }>,
+  originalDocuments: DocumentInsert[],
+): RerankedDocument[] => {
+  const rerankedDocuments = scoredDocuments
+    .map((document) => {
+      const rerankedDocument = originalDocuments.find(
+        (e) => e.content === document.documentContent,
+      );
+      if (!rerankedDocument) return undefined;
+      return {
+        ...rerankedDocument,
+        relevanceScore: document.relevanceScore,
+      };
+    })
+    .filter((document): document is RerankedDocument => document !== undefined)
+    .filter((document) => document.relevanceScore > 0)
+    .sort((a, b) => b.relevanceScore - a.relevanceScore);
+
+  return rerankedDocuments;
+};
+
+export const rerankDocuments = async (
+  query: string,
+  documents: DocumentInsert[],
+): Promise<RerankedDocument[]> => {
+  const scoredDocuments = await scoreDocumentsWithAI(query, documents);
+
+  const rerankedDocuments = processRerankedDocuments(
+    scoredDocuments,
+    documents,
+  );
+
+  return rerankedDocuments;
 };
