@@ -13,8 +13,13 @@
     "chatrag",
     "cmdk",
     "embla",
+    "langchain",
     "ragchat",
+    "rerank",
+    "reranked",
+    "reranking",
     "sonner",
+    "textsplitters",
     "typesafety",
     "vaul"
   ],
