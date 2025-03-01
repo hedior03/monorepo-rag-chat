@@ -19,7 +19,6 @@ docker-compose ps
 echo ""
 echo "Services are available at:"
 echo "- API and Web UI: http://localhost:3000"
-echo "- PgAdmin: http://localhost:5050 (login with admin@admin.com / admin)"
 echo ""
 echo "To view logs: docker-compose logs -f"
 echo "To stop: docker-compose down" 

@@ -5,7 +5,7 @@ A monorepo with Hono API and Tanstack Router SPA for a RAG (Retrieval-Augmented 
 ## Project Structure
 
 - `apps/api`: Backend API built with Hono
-- `apps/web`: Frontend SPA built with Tanstack Router
+- `apps/web`: Frontend SPA built with React + Tanstack Router
 - Docker setup for PostgreSQL with pgvector for vector storage
 
 ## Prerequisites
@@ -25,6 +25,7 @@ A monorepo with Hono API and Tanstack Router SPA for a RAG (Retrieval-Augmented 
 ```
 
 This script will:
+
 - Set up environment files from `.env.example`
 - Start the PostgreSQL database
 - Set up the database schema and run migrations
@@ -45,6 +46,7 @@ The `start-dev.sh` script supports the following options:
 - `--fresh`: Perform a fresh start by resetting the database and seeding it with sample data
 
 Examples:
+
 ```bash
 # Normal start
 ./start-dev.sh
@@ -61,9 +63,8 @@ Examples:
 
 ## Development
 
-- API runs on: http://localhost:3000
-- Web app runs on: http://localhost:5173
-- PgAdmin runs on: http://localhost:5050 (login: admin@admin.com / admin)
+- API runs on: <http://localhost:3000>
+- Web app runs on: <http://localhost:5173>
 
 ## Troubleshooting
 
@@ -74,8 +75,9 @@ If you encounter database errors or issues with the application, try running wit
 ```
 
 This will:
+
 1. Stop any running containers
 2. Remove the database volume
 3. Recreate the database
 4. Set up the schema and run migrations
-5. Seed the database with sample data 
+5. Seed the database with sample data
