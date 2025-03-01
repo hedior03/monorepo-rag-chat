@@ -12,6 +12,7 @@ import type {
 import { type ChatModel, chatModels, myProvider } from '@/api/lib/ai/models';
 import {
   formatPromptWithHistory,
+  generatePromptEnhancementPrompt,
   generateRerankingPrompt,
 } from '@/api/lib/ai/prompts';
 
@@ -19,17 +20,38 @@ export const listModels = async (): Promise<ChatModel[]> => {
   return chatModels;
 };
 
+export const enhancePrompt = async (
+  prompt: string,
+  history: MessageInsert[],
+): Promise<string> => {
+  const promptEnhancementPrompt = generatePromptEnhancementPrompt(
+    prompt,
+    history,
+  );
+
+  const enhancedPrompt = await generateText({
+    model: myProvider.languageModel(chatModels[0].id),
+    prompt: promptEnhancementPrompt,
+  });
+
+  return enhancedPrompt.text;
+};
+
 export const generateResponse = async (
   model: ChatModel,
   history: MessageInsert[],
 ): Promise<MessageInsert | null> => {
   try {
-    const similarDocuments = await queryDocumentSimilarity(
-      history[history.length - 1].content,
-    );
+    const prompt = history[history.length - 1].content;
+
+    const enhancedPrompt = await enhancePrompt(prompt, history);
+
+    console.log('enhancedPrompt', enhancedPrompt);
+
+    const similarDocuments = await queryDocumentSimilarity(enhancedPrompt);
 
     const rerankedDocuments = await rerankDocuments(
-      history[history.length - 1].content,
+      enhancedPrompt,
       similarDocuments.map((d) => ({
         content: d.content,
         filename:
@@ -38,14 +60,14 @@ export const generateResponse = async (
       })),
     );
 
-    const prompt = formatPromptWithHistory(
-      rerankedDocuments.map((d) => d.content),
-      history,
-    );
+    const promptWithContext = formatPromptWithHistory(rerankedDocuments, [
+      ...history,
+      { content: enhancedPrompt, role: 'user' },
+    ]);
 
     const response = await generateText({
       model: myProvider.languageModel(model.id),
-      prompt,
+      prompt: promptWithContext,
     });
 
     if (response?.text) {
