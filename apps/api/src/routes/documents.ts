@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
-import { indexTextDocument, queryDocumentSimilarity } from '../services/ai';
+import { indexTextDocument, queryDocumentSimilarity } from '@/api/services/ai';
 import { zValidator } from '@hono/zod-validator';
-import { documentInsertSchema } from '../db';
-import { documentSimilaritySchema } from '../lib/validationSchemas';
+import { documentInsertSchema } from '@/api/db';
+import { documentSimilaritySchema } from '@/api/lib/validationSchemas';
 
 const router = new Hono()
   .post('/', zValidator('json', documentInsertSchema), async (c) => {

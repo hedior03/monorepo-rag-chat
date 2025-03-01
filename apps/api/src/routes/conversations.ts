@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { ConversationsService } from '@/api/services/conversations';
-import { MessagesService } from '../services/messages';
+import { MessagesService } from '@/api/services/messages';
 
 const conversationService = new ConversationsService();
 const messageService = new MessagesService();

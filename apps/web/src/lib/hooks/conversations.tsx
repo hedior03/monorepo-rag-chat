@@ -1,4 +1,4 @@
-import { ConversationApi } from '../api';
+import { ConversationApi } from '~/lib/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 const conversationApi = new ConversationApi();

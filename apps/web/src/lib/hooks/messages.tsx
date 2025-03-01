@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { type Message, MessageApi } from '../api';
+import { type Message, MessageApi } from '~/lib/api';
 
 const messageApi = new MessageApi();
 

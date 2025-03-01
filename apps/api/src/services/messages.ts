@@ -6,10 +6,9 @@ import {
   messagesTable,
 } from '@/api/db/schema';
 import type { Message, MessageInsert } from '@/api/db/schema';
-import { chatModels } from '../lib/ai/models';
-import { generateResponse } from './ai';
+import { chatModels } from '@/api/lib/ai/models';
+import { generateResponse } from '@/api/services/ai';
 
-// Helper function to convert database message to API type
 function mapMessage(dbMessage: unknown): Message {
   return messageSchema.parse(dbMessage);
 }

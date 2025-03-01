@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { MessagesService } from '@/api/services/messages';
 import { messageInsertSchema } from '@/api/db/schema';
-import { paginationSchema } from '../lib/validationSchemas';
+import { paginationSchema } from '@/api/lib/validationSchemas';
 
 const service = new MessagesService();
 

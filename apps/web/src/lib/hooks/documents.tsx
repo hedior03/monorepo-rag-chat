@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
-import { DocumentApi } from '../api';
-import type { DocumentSimilarity } from '../api';
+import { DocumentApi } from '~/lib/api';
+import type { DocumentSimilarity } from '~/lib/api';
 import { useMutation } from '@tanstack/react-query';
 
 export type DocumentUploadResponse = number[];
