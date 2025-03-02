@@ -2,6 +2,11 @@
 
 A monorepo with Hono API and Tanstack Router SPA for a RAG (Retrieval-Augmented Generation) chat application.
 
+## Documentation
+
+- [Conceptual Design](./conceptual-design.md) - Details the RAG implementation and components
+- [Architectural Decisions](./architectural-decisions.md) - Explains the technical decisions made for this project
+
 ## Project Structure
 
 - `apps/api`: Backend API built with Hono
