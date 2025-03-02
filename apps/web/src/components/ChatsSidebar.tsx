@@ -1,4 +1,4 @@
-import { MessageSquare, Plus } from 'lucide-react';
+import { MessageSquare, Plus, Trash } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -52,10 +52,11 @@ export default function ChatsSidebar({ conversations }: ChatsSidebarProps) {
                     'px-2 py-2 flex justify-start items-center gap-4 w-full',
                   )}
                 >
-                  <MessageSquare className="shrink-0" />
-                  <span className="overflow-ellipsis">
+                  <MessageSquare className="shrink-0 size-4" />
+                  <span className="text-sm overflow-ellipsis overflow-hidden whitespace-nowrap">
                     {conversation.title}
                   </span>
+                  <Trash className="shrink-0 size-4" />
                 </Link>
               </SidebarMenuItem>
             ))
