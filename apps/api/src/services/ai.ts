@@ -46,8 +46,6 @@ export const generateResponse = async (
 
     const enhancedPrompt = await enhancePrompt(prompt, history);
 
-    console.log('enhancedPrompt', enhancedPrompt);
-
     const similarDocuments = await queryDocumentSimilarity(enhancedPrompt);
 
     const rerankedDocuments = await rerankDocuments(

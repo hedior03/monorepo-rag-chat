@@ -17,7 +17,7 @@ export type ChatsSidebarProps = {
 
 export default function ChatsSidebar({ conversations }: ChatsSidebarProps) {
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="inset">
       <SidebarHeader className="flex flex-row items-center justify-between">
         <h2 className="px-2 text-lg font-semibold tracking-tight">Chats</h2>
         <SidebarMenuButton

@@ -4,6 +4,7 @@ import InputMessage from '~/components/components/InputMessage';
 import { Message } from '~/components/components/message';
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary';
 import { useCreateMessage } from '~/lib/hooks/messages';
+import { ScrollArea } from '~/components/ui/scroll-area';
 
 export const Route = createFileRoute('/_conversation/$conversationId')({
   component: ConversationComponent,
@@ -39,16 +40,18 @@ function ConversationComponent() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-col-reverse flex-1 overflow-y-auto p-4 gap-4">
-        {conversation.messages.map((message) => (
-          <Message
-            key={message.id}
-            userRole={message.role}
-            content={message.content}
-          />
-        ))}
-      </div>
-      <div className="p-4 border-t ">
+      <ScrollArea className="flex flex-col-reverse flex-1 overflow-y-auto">
+        <div className="mx-auto my-4 lg:max-w-[50rem] flex flex-col-reverse gap-4">
+          {conversation.messages.map((message) => (
+            <Message
+              key={message.id}
+              userRole={message.role}
+              content={message.content}
+            />
+          ))}
+        </div>
+      </ScrollArea>
+      <div>
         <InputMessage
           onSubmit={sendMessageMutation.mutate}
           isLoading={sendMessageMutation.isPending}

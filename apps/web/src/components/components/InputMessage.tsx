@@ -51,7 +51,7 @@ export default function InputMessage({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex w-full items-center space-x-2 gap-2 px-2"
+        className="flex w-full items-center space-x-2 gap-2 p-4 border-t border-muted"
       >
         <FormField
           control={form.control}
